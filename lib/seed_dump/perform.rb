@@ -87,7 +87,7 @@ module SeedDump
       arr.each_with_index { |r,i| 
         attr_s = [];
         r.attributes.each do |k,v|
-          if ((model.attr_accessible[:default].include? k) || @opts['without_protection'] || @opts['with_id'])
+          if ((model.attr_accessible[:default].include? k) || @opts['without_protection'])
             dumpAttribute(attr_s,r,k,v)
             @last_record.push k 
           end
