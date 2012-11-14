@@ -48,7 +48,12 @@ module SeedDump
         require f
 
         puts "Detected model #{model}" if @opts['debug']
-        @models.push model if @opts['models'].include?(model) || @opts['models'].empty? 
+        @models.push model if @opts['models'].include?(model) || @opts['models'].empty?
+        unless @opts['models'].empty?
+          @models.sort_by! do |m|
+            @opts['models'].index m
+          end
+        end
       end
     end
 
