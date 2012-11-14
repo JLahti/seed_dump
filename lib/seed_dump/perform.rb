@@ -90,6 +90,10 @@ module SeedDump
       arr = model.find(:all, @ar_options) unless @opts['no-data']
       arr = arr.empty? ? [model.new] : arr 
 
+      if @opts['without_protection']
+        options = ', :without_protection => true '
+      end
+
       arr.each_with_index { |r,i| 
         attr_s = [];
         r.attributes.each do |k,v|
@@ -98,14 +102,21 @@ module SeedDump
             @last_record.push k 
           end
         end
-        rows.push "#{@indent}{ " << attr_s.join(', ') << " }"
+        rows.push "temp = #{model}.create(" << attr_s.join(', ') << "#{options})"
+
+        translations = r.translations rescue nil
+        translations.where("locale != ?",I18n.default_locale).each do |t|
+          attr_s = [];
+          t.attributes.each do |k,v|
+            if ((t.class.attr_accessible[:default].include? k))
+              attr_s.push("#{k.to_sym.inspect} => '#{v}'")
+            end
+          end
+          rows.push "temp.translations.create(" << attr_s.join(', ') << ")"
+        end unless translations.nil?          
       } 
 
-      if @opts['without_protection']
-        options = ', :without_protection => true '
-      end
-
-      "\n#{model}.create([\n" << rows.join(",\n") << "\n]#{options})\n"
+      rows.join("\n")
     end
 
     def dumpModels
