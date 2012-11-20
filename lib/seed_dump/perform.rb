@@ -115,8 +115,8 @@ module SeedDump
           rows.push "temp.translations.create(" << attr_s.join(', ') << ")"
         end unless translations.nil?          
       } 
-
-      rows.join("\n")
+      rows.push "ActiveRecord::Base.connection.reset_pk_sequence!('#{model.table_name}') if ActiveRecord::Base.connection.adapter_name =~ /PostgreSQL/"
+      rows.join("\n")      
     end
 
     def dumpModels
