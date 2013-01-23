@@ -108,7 +108,7 @@ module SeedDump
         translations.where("locale != ?",I18n.default_locale).each do |t|
           attr_s = [];
           t.attributes.each do |k,v|
-            if ((t.class.attr_accessible[:default].include? k))
+            if ((t.class.attr_accessible[:default].include?(k) and v))
               attr_s.push("#{k.to_sym.inspect} => '#{v}'")
             end
           end
