@@ -102,7 +102,7 @@ module SeedDump
             @last_record.push k 
           end
         end
-        rows.push "temp = #{model}.create(" << attr_s.join(', ') << "#{options})"
+        rows.push "temp = #{model}.create({" << attr_s.join(', ') << "}#{options})"
 
         translations = r.translations rescue nil
         translations.where("locale != ?",I18n.default_locale).each do |t|
